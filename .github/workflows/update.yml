@@ -1,0 +1,25 @@
+name: Update
+on:
+  workflow_dispatch:
+#  schedule:
+#    - cron: "40 * * * *"
+jobs:
+  update:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: Install
+        run: |
+          gh extension install grafana/gh-xk6
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      - name: Import
+        run: |
+          gh xk6 catalog update -f catalog.json
+          gh xk6 catalog update -f official.json
+          gh xk6 catalog update -f cloud.json
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      - name: Add and Push
+        uses: EndBug/add-and-commit@v9
