@@ -16,6 +16,14 @@ jobs:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       - name: Checkout code
         uses: actions/checkout@v4
+      - name: Cache gh cache
+        id: cache-gh
+        uses: actions/cache@v3
+        env:
+          cache-name: cache-gh-cache
+        with:
+          path: ~/.cache/gh
+          key: gh
       - name: Update versions
         run: |
           gh xk6 catalog update -f catalog.json
