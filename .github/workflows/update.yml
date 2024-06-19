@@ -9,14 +9,23 @@ jobs:
   update:
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout
-        uses: actions/checkout@v4
-      - name: Install
+      - name: Cache gh extensions
+        id: cache-gh
+        uses: actions/cache@v3
+        env:
+          cache-name: cache-gh-extensions
+        with:
+          path: ~/.local/share/gh
+          key: gh
+      - name: Install gh extensions
+        if: ${{ steps.cache-gh.outputs.cache-hit != 'true' }}
         run: |
           gh extension install grafana/gh-xk6
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-      - name: Import
+      - name: Checkout code
+        uses: actions/checkout@v4
+      - name: Update versions
         run: |
           gh xk6 catalog update -f catalog.json
           gh xk6 catalog update -f official.json
